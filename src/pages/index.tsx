@@ -61,7 +61,7 @@ const InitialData: initialDataInferface[] = [
   },
 ];
 
-for (let i = 6; i < 10; i++) {
+for (let i = 6; i < 7; i++) {
   InitialData[0].issues.push({ id: i, name: `uten${i}` });
 }
 
