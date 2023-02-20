@@ -3,13 +3,11 @@
   height: 640px;
   background: #f7f7f7;
 }
-
 .column {
   display: inline-block;
   width: 292px;
   height: 640px;
 }
-
 .columnTitle {
   color: #383838;
   font-size: 14px;
@@ -17,36 +15,28 @@
   line-height: 40px;
   margin: 0 10px;
 }
-
 .columnContent {
   height: 600px;
   overflow: auto;
 }
-
 .columnContentActive {
   overflow: auto;
   height: 600px;
   background: #ccecff;
   border: 2px solid #1b9aee;
 }
-
-//正常样式
 .issue {
   position: relative;
   min-height: 20px;
   padding: 14px 44px;
-  background: #fff;
+  background: #FFF;
   margin: 8px 10px;
 }
-
-//拖动样式
 .issueDragging {
   position: relative;
   min-height: 20px;
   padding: 14px 44px;
-  //background: #ffffff;
   background: #e46767;
-
   opacity: 0.9;
   margin: 8px 10px;
 }

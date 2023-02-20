@@ -88,7 +88,7 @@ const Issue = (props: IssueProps) => {
   );
 };
 
-// 没一个列表中 处理--
+// 每一个列表中 处理--
 const Column = (props: ColumnProps) => {
   const { columnIndex, activeColumn, column } = props;
 
@@ -124,7 +124,7 @@ const Column = (props: ColumnProps) => {
             {/*遍历数据列表*/}
             {issues.map((issue, index) => (
               <Issue
-                key={issue.id}
+                // key={issue.id}
                 issueIndex={index}
                 id={issue.id}
                 name={issue.name}
