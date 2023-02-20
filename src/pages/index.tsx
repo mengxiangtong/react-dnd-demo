@@ -181,17 +181,11 @@ export default () => {
     const toColumnIndex = Number(destination.droppableId);
     const toIssueIndex = destination.index;
 
-    console.log(
-      '-结束拖拽-来源列-onDragEnd--fromColumnIndex===' + fromColumnIndex,
-    );
-    console.log(
-      '-结束拖拽-来源索引-onDragEnd---fromIssueIndex===' + fromIssueIndex,
-    );
+    console.log('-结束拖拽-来源列-------fromColumnIndex=' + fromColumnIndex);
+    console.log('-结束拖拽-来源索引-fromIssueIndex=' + fromIssueIndex);
 
-    console.log('-结束拖拽-目标列-onDragEnd--toColumnIndex===' + toColumnIndex);
-    console.log(
-      '-结束拖拽-目标索引-onDragEnd---toIssueIndex===' + toIssueIndex,
-    );
+    console.log('-结束拖拽-目标列-------toColumnIndex===' + toColumnIndex);
+    console.log('-结束拖拽-目标索引--toIssueIndex===' + toIssueIndex);
 
     const TempIssue = data[fromColumnIndex].issues[fromIssueIndex];
 
@@ -255,7 +249,7 @@ export default () => {
                 "name": "uten9"
             }
         ], 
-        "acceptIds": [
+        "acceptnpm Ids": [
             200
         ]
     }, 
