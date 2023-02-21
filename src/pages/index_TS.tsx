@@ -10,66 +10,12 @@ import {
 } from 'react-beautiful-dnd';
 import update from 'immutability-helper';
 import styles from './index.less';
-import { Component } from 'react';
 
-const data = [
-  {
-    id: 100,
-    name: 'todo',
-    issues: [
-      {
-        id: 1,
-        name: '吃饭',
-      },
-      {
-        id: 2,
-        name: '睡觉',
-      },
-      {
-        id: 3,
-        name: '打豆豆',
-      },
-      {
-        id: 6,
-        name: 'uten6',
-      },
-      {
-        id: 7,
-        name: 'uten7',
-      },
-      {
-        id: 8,
-        name: 'uten8',
-      },
-      {
-        id: 9,
-        name: 'uten9',
-      },
-    ],
-    acceptIds: [200],
-  },
-  {
-    id: 200,
-    name: 'doing',
-    issues: [
-      {
-        id: 4,
-        name: '删库',
-      },
-      {
-        id: 5,
-        name: '跑路',
-      },
-    ],
-    acceptIds: [300],
-  },
-  {
-    id: 300,
-    name: 'done',
-    issues: [],
-    acceptIds: [100, 200],
-  },
-];
+// import {ReactBeautifulDnd } from './reactButifulDnd/ReactBeautifulDnd'
+
+///
+///
+///TS 写法备份
 
 interface initialDataInferface {
   id: number;
@@ -91,6 +37,38 @@ interface IssueProps {
   id: number;
   issueIndex: number;
   name: string;
+}
+
+const InitialData: initialDataInferface[] = [
+  {
+    id: 100,
+    name: 'todo',
+    issues: [
+      { id: 1, name: '吃饭' },
+      { id: 2, name: '睡觉' },
+      { id: 3, name: '打豆豆' },
+    ],
+    acceptIds: [100, 200, 300], // 拖动权限处理
+  },
+  {
+    id: 200,
+    name: 'doing',
+    issues: [
+      { id: 4, name: '删库' },
+      { id: 5, name: '跑路' },
+    ],
+    acceptIds: [100, 200, 300], // 拖动权限处理
+  },
+  {
+    id: 300,
+    name: 'done',
+    issues: [],
+    acceptIds: [100, 200, 300], // 拖动权限处理
+  },
+];
+
+for (let i = 6; i < 7; i++) {
+  InitialData[0].issues.push({ id: i, name: `uten${i}` });
 }
 
 // 一个可拖动的块
@@ -122,6 +100,8 @@ const Column = (props: ColumnProps) => {
 
   //单个数据对象 id 100   200   300
   const { id, issues } = column;
+
+  console.log('---Column------activeColumn==' + JSON.stringify(activeColumn)); // null
 
   return (
     <div className={styles.column}>
@@ -164,35 +144,39 @@ const Column = (props: ColumnProps) => {
   );
 };
 
-class Board extends Component {
-  static defaultProps = {
-    isCombineEnabled: false,
-  };
+export default () => {
+  const [data, setData] = useState(InitialData);
+  const [activeColumn, setActiveColumn] = useState<initialDataInferface | null>(
+    null,
+  );
 
-  constructor(props) {
-    super(props);
-    this.state = {
-      activeColumn: null,
-      data: data,
-    };
-  }
-
-  onDragStart = (result: DragUpdate) => {
-    const data = this.state.data;
-
+  const onDragStart = (result: DragUpdate) => {
     const { source } = result;
     const columnIndex = Number(source.droppableId);
     console.log('--开始拖拽--onDragStart--columnIndex-===' + columnIndex);
-
-    this.setState({
-      activeColumn: data[columnIndex],
-    });
+    setActiveColumn(data[columnIndex]);
   };
 
-  onDragEnd = (result: DropResult) => {
-    const data = this.state.data;
+  const onDragEnd = (result: DropResult) => {
     console.log('-结束拖拽---------------result===' + JSON.stringify(result));
 
+    /*
+    {
+        "draggableId": "2", 
+        "type": "DEFAULT", 
+        "source": {
+            "index": 1, 
+            "droppableId": "2"
+        }, 
+        "reason": "DROP", 
+        "mode": "FLUID", 
+        "destination": {
+            "droppableId": "1", 
+            "index": 1
+        }, 
+        "combine": null
+    }
+    */
     const { destination, source } = result;
     if (!destination) {
       return;
@@ -231,44 +215,97 @@ class Board extends Component {
       },
     });
 
-    this.setState({
-      data: TempData,
-      activeColumn: null,
-    });
+    setData(TempData);
+
+    setActiveColumn(null);
   };
 
-  render() {
-    const data = this.state.data;
-    const activeColumn = this.state.activeColumn;
+  /*
+  [
+    {
+        "id": 100, 
+        "name": "todo", 
+        "issues": [
+            {
+                "id": 1, 
+                "name": "吃饭"
+            }, 
+            {
+                "id": 2, 
+                "name": "睡觉"
+            }, 
+            {
+                "id": 3, 
+                "name": "打豆豆"
+            }, 
+            {
+                "id": 6, 
+                "name": "uten6"
+            }, 
+            {
+                "id": 7, 
+                "name": "uten7"
+            }, 
+            {
+                "id": 8, 
+                "name": "uten8"
+            }, 
+            {
+                "id": 9, 
+                "name": "uten9"
+            }
+        ], 
+        "acceptIds": [
+            200
+        ]
+    }, 
+    {
+        "id": 200, 
+        "name": "doing", 
+        "issues": [
+            {
+                "id": 4, 
+                "name": "删库"
+            }, 
+            {
+                "id": 5, 
+                "name": "跑路"
+            }
+        ], 
+        "acceptIds": [
+            300
+        ]
+    }, 
+    {
+        "id": 300, 
+        "name": "done", 
+        "issues": [ ], 
+        "acceptIds": [
+            100, 
+            200
+        ]
+    }
+]
 
-    return (
-      <div>
-        <DragDropContext
-          onDragEnd={this.onDragEnd}
-          onDragStart={this.onDragStart}
-        >
-          <div className={styles.container}>
-            {data.map((column, index) => {
-              return (
-                <Column
-                  columnIndex={index}
-                  key={column.id}
-                  activeColumn={activeColumn}
-                  column={column}
-                />
-              );
-            })}
-          </div>
-        </DragDropContext>
-      </div>
-    );
-  }
-}
+  */
 
-export default () => {
+  console.log('----222-----data--===' + JSON.stringify(data));
+  console.log('----222-----activeColumn--===' + activeColumn); // null
+
   return (
-    <div>
-      <Board />
-    </div>
+    <DragDropContext onDragEnd={onDragEnd} onDragStart={onDragStart}>
+      <div className={styles.container}>
+        {data.map((column, index) => {
+          return (
+            <Column
+              columnIndex={index}
+              key={column.id}
+              activeColumn={activeColumn}
+              column={column}
+            />
+          );
+        })}
+      </div>
+    </DragDropContext>
   );
 };
