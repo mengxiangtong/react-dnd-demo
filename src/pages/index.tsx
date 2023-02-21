@@ -33,20 +33,8 @@ const data = [
         id: 6,
         name: 'uten6',
       },
-      {
-        id: 7,
-        name: 'uten7',
-      },
-      {
-        id: 8,
-        name: 'uten8',
-      },
-      {
-        id: 9,
-        name: 'uten9',
-      },
     ],
-    acceptIds: [200],
+    acceptIds: [100, 200, 300],
   },
   {
     id: 200,
@@ -56,18 +44,19 @@ const data = [
         id: 4,
         name: '删库',
       },
+    ],
+    acceptIds: [100, 200, 300],
+  },
+  {
+    id: 300,
+    name: 'done',
+    issues: [
       {
         id: 5,
         name: '跑路',
       },
     ],
-    acceptIds: [300],
-  },
-  {
-    id: 300,
-    name: 'done',
-    issues: [],
-    acceptIds: [100, 200],
+    acceptIds: [100, 200, 300],
   },
 ];
 
