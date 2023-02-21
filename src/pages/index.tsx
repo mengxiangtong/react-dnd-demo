@@ -19,15 +19,15 @@ const data = [
     issues: [
       {
         id: 1,
-        name: '吃饭',
+        name: '待备料',
       },
       {
         id: 2,
-        name: '睡觉',
+        name: '已备料',
       },
       {
         id: 3,
-        name: '打豆豆',
+        name: '未备料',
       },
       {
         id: 6,
@@ -42,7 +42,7 @@ const data = [
     issues: [
       {
         id: 4,
-        name: '删库',
+        name: '已完工',
       },
     ],
     acceptIds: [100, 200, 300],
@@ -53,7 +53,7 @@ const data = [
     issues: [
       {
         id: 5,
-        name: '跑路',
+        name: '未完工',
       },
     ],
     acceptIds: [100, 200, 300],
