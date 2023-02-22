@@ -23,20 +23,21 @@
   overflow: auto;
   height: 600px;
   background: #ccecff;
-  border: 2px solid #1b9aee;
+  border: 1px solid #1b9aee;
 }
 .issue {
   position: relative;
   min-height: 20px;
   padding: 14px 44px;
-  background: #FFF;
+  background: #fff;
   margin: 8px 10px;
 }
 .issueDragging {
   position: relative;
   min-height: 20px;
   padding: 14px 44px;
-  background: #e46767;
+  background: #bbb0b0;
   opacity: 0.9;
   margin: 8px 10px;
+  border: solid 2px #f73d1c;
 }

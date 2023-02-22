@@ -158,7 +158,7 @@ class Board extends Component {
     isCombineEnabled: false,
   };
 
-  constructor(props) {
+  constructor(props: any) {
     super(props);
     this.state = {
       activeColumn: null,
