@@ -16,10 +16,14 @@
   margin: 0 10px;
 }
 .columnContent {
+  margin-left: 10px;
   height: 600px;
   overflow: auto;
+  background: #e7ebee;
+  border: 1px solid #dae5ea;
 }
 .columnContentActive {
+  margin-left: 10px;
   overflow: auto;
   height: 600px;
   background: #ccecff;
