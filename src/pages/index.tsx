@@ -47,6 +47,8 @@ const data = [
     ],
     acceptIds: [100, 200, 300],
   },
+
+  /*,
   {
     id: 300,
     name: 'done',
@@ -57,7 +59,7 @@ const data = [
       },
     ],
     acceptIds: [100, 200, 300],
-  },
+  },*/
 ];
 
 interface initialDataInferface {
@@ -99,6 +101,7 @@ const Issue = (props: IssueProps) => {
           {...provided.dragHandleProps}
         >
           {name}
+          <div className={styles.item0}>AAA</div>
         </div>
       )}
     </Draggable>
@@ -128,7 +131,7 @@ const Column = (props: ColumnProps) => {
       >
         {(provided, snapshot) => (
           <div
-            ref={provided.innerRef}
+            ref={provided.innerRef} //整个表格
             className={
               snapshot.isDraggingOver
                 ? styles.columnContentActive

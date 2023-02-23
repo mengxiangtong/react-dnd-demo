@@ -5,8 +5,9 @@
 }
 .column {
   display: inline-block;
-  width: 292px;
+  width: 49.8%;
   height: 640px;
+  background-color: #efe4e4;
 }
 .columnTitle {
   color: #383838;
@@ -35,6 +36,8 @@
   padding: 14px 44px;
   background: #fff;
   margin: 8px 10px;
+  display: flex;
+  flex-direction: row;
 }
 .issueDragging {
   position: relative;
@@ -44,4 +47,12 @@
   opacity: 0.9;
   margin: 8px 10px;
   border: solid 2px #f73d1c;
+  display: flex;
+  flex-direction: row;
+}
+.item0 {
+  width: 50px;
+  height: 20px;
+  background-color: #a2d1ed;
+  margin-left: 10px;
 }
