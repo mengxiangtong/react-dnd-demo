@@ -50,7 +50,7 @@ const data = [
         ],
       },
       {
-        id: 6,
+        id: 5,
         name: 'uten6',
         issueItems: [
           {
@@ -106,7 +106,8 @@ const Issue = (props: IssueProps) => {
     '一个可拖动的条目-Issue-外层issueIndex==' + issueIndex + ', id== ' + id,
   );
 
-  const data = props.data;
+  //const data = props.data;
+  const data = [props.todoData, props.doingData];
 
   console.log('--大数组---data-' + JSON.stringify(data));
 
@@ -218,17 +219,21 @@ const Column = (props: ColumnProps) => {
   //单个数据对象 id 100   200   300
   const { id, issues } = column;
 
-  let is = activeColumn
-    ? !(activeColumn.acceptIds.includes(id) || id === activeColumn.id)
-    : true;
+  //let is = activeColumn ? !(activeColumn.acceptIds.includes(id) || id === activeColumn.id) : true;
+
+  let is = true;
+  if (columnIndex == 'todo') {
+    is = true;
+  } else {
+    is = false;
+  }
 
   if (is) {
     console.log('--------不可拖--');
   } else {
     console.log('-------可拖--');
   }
-
-  console.log('-this.props.data--' + JSON.stringify(props.data));
+  //console.log('-this.props.data--' + JSON.stringify(props.data));
   //某个包含若干个可拖拽项的组。
   return (
     <div className={styles.column}>
@@ -238,11 +243,7 @@ const Column = (props: ColumnProps) => {
       <Droppable
         droppableId={`${columnIndex}`}
         mode="virtual"
-        isDropDisabled={
-          activeColumn
-            ? !(activeColumn.acceptIds.includes(id) || id === activeColumn.id)
-            : true
-        } //是否能接受拖动
+        isDropDisabled={false} //是否能接受拖动
       >
         {(provided, snapshot) => (
           <div
@@ -262,6 +263,8 @@ const Column = (props: ColumnProps) => {
                 id={issue.id}
                 name={issue.name}
                 data={props.data}
+                todoData={props.todoData}
+                doingData={props.doingData}
               />
             ))}
             {provided.placeholder}
@@ -280,8 +283,63 @@ class Board extends Component {
   constructor(props: any) {
     super(props);
     this.state = {
-      activeColumn: null,
+      activeColumn: null, //拖动的 长条
+      activeIssue: null, //拖动的小块
       data: data,
+      todoData: {
+        id: 100,
+        name: 'todo',
+        issues: [
+          {
+            id: 1,
+            name: '待备料',
+            issueItems: [],
+          },
+          {
+            id: 2,
+            name: '已备料',
+            issueItems: [],
+          },
+        ],
+        acceptIds: [100, 200],
+      },
+      doingData: {
+        id: 200,
+        name: 'doing',
+        issues: [
+          {
+            id: 8,
+            name: '已完工2',
+            issueItems: [
+              {
+                id: 3,
+                text: '开始拖的数字2',
+              },
+            ],
+          },
+          {
+            id: 4,
+            name: '已完工',
+            issueItems: [
+              {
+                id: 1,
+                text: '开始拖的数字',
+              },
+            ],
+          },
+          {
+            id: 5,
+            name: 'uten6',
+            issueItems: [
+              {
+                id: 2,
+                text: '结束拖的数字',
+              },
+            ],
+          },
+        ],
+        acceptIds: [100, 200],
+      },
     };
   }
 
@@ -299,69 +357,84 @@ class Board extends Component {
   onDragStart = (result: DragUpdate) => {
     const data = this.state.data;
 
-    console.log('--开始拖拽--=result===' + JSON.stringify(result));
-    console.log('---data-' + JSON.stringify(data));
+    // const doingData = this.state.doingData;
+    const todoData = this.state.todoData;
+    const doingData = this.state.doingData;
 
-    /*
-    [
-    {
-        "id": 100, 
-        "name": "todo", 
-        "issues": [
-            {
-                "id": 1, 
-                "name": "待备料"
-            }, 
-            {
-                "id": 2, 
-                "name": "已备料"
-            }, 
-            {
-                "id": 3, 
-                "name": "未备料"
-            }
-        ], 
-        "acceptIds": [
-            100, 
-            200
-        ]
+    console.log('--开始拖拽--=result===' + JSON.stringify(result));
+
+    console.log('--doingData--' + JSON.stringify(doingData));
+
+    //console.log('---data-' + JSON.stringify(data));
+
+    /*result
+
+{"draggableId":"1","type":"DEFAULT","source":{"droppableId":"todo","index":0},"mode":"FLUID"}
+
+
+  {
+    "draggableId": "A1", 
+    "type": "DEFAULT", 
+    "source": {
+        "droppableId": 4, 
+        "index": "A1"
     }, 
-    {
-        "id": 200, 
-        "name": "doing", 
-        "issues": [
-            {
-                "id": 4, 
-                "name": "已完工"
-            }, 
-            {
-                "id": 6, 
-                "name": "uten6"
-            }
-        ], 
-        "acceptIds": [
-            100, 
-            200
-        ]
-    }
-]
+    "mode": "FLUID"
+}
     */
 
     const { source } = result;
 
-    if (source.droppableId == 'mymodal') {
+    if (source.droppableId == 'doing' || source.droppableId == 'todo') {
+      /*
+      --开始拖拽--=result==={"draggableId":"6","type":"DEFAULT","source":{"droppableId":"1","index":1},"mode":"FLUID"}
+     
+     --开始拖拽--=result==={"draggableId":"2","type":"DEFAULT","source":{"droppableId":"todo","index":1},"mode":"FLUID"}
+      */
+
+      if (source.droppableId == 'todo') {
+        //拖动左边
+
+        const columnIndex = Number(source.index);
+        console.log(
+          '--开始拖拽-外层-onDragStart--columnIndex-===' + columnIndex,
+        );
+        console.log('-666-todoData--' + JSON.stringify(todoData));
+
+        console.log(
+          '---6666-todoData.issues[columnIndex] --' +
+            JSON.stringify(todoData.issues[columnIndex]),
+        );
+        //外层
+        this.setState({
+          activeColumn: todoData.issues[columnIndex],
+        });
+      } else if (source.droppableId == 'todo') {
+        //拖动右边
+      }
     } else {
+      /*
+      --开始拖拽--=result==={"draggableId":"6","type":"DEFAULT","source":{"droppableId":"1","index":1},"mode":"FLUID"}
+      */
+      //内层-拖动小块 哪一行
       const columnIndex = Number(source.droppableId);
-      console.log('--开始拖拽--onDragStart--columnIndex-===' + columnIndex);
+      console.log(
+        '--开始拖拽-内层-拖动小块 哪一行-onDragStart--columnIndex-===' +
+          columnIndex,
+      );
+
+      // 通过行id 找出行
 
       this.setState({
-        activeColumn: data[columnIndex],
+        activeIssue: columnIndex,
       });
     }
   };
 
   onDragEnd = (result: DropResult) => {
-    const data = this.state.data;
+    const todoData = this.state.todoData;
+    const doingData = this.state.doingData;
+
     console.log('-结束拖拽---------------result===' + JSON.stringify(result));
 
     const { destination, source } = result;
@@ -369,9 +442,14 @@ class Board extends Component {
       return;
     }
 
-    const fromColumnIndex = Number(source.droppableId);
+    // const fromColumnIndex = Number(source.droppableId);
+    // const fromIssueIndex = source.index;
+    // const toColumnIndex = Number(destination.droppableId);
+    // const toIssueIndex = destination.index;
+
+    const fromColumnIndex = source.droppableId;
     const fromIssueIndex = source.index;
-    const toColumnIndex = Number(destination.droppableId);
+    const toColumnIndex = destination.droppableId;
     const toIssueIndex = destination.index;
 
     console.log('-结束拖拽-来源列--fromColumnIndex===' + fromColumnIndex);
@@ -379,112 +457,187 @@ class Board extends Component {
 
     console.log('-结束拖拽-目标列--toColumnIndex===' + toColumnIndex); //4
     console.log('-结束拖拽-目标索引--toIssueIndex===' + toIssueIndex); //A1
-    let fromIssueIndex_noA = fromIssueIndex.slice(1);
-    console.log(
-      '-----------------------------------------------------------------',
-    );
-    console.log('---data-=====' + JSON.stringify(data));
 
-    //取出来 拖走的
-    let issues = data[1].issues;
-    console.log('----data11-----issues---' + JSON.stringify(issues));
-    //根据id 过滤
-    let item = issues.filter(item => {
-      return item.id == fromColumnIndex;
-    })[0];
+    if (
+      destination.droppableId == 'doing' &&
+      source.droppableId != 'todo' &&
+      source.droppableId != 'doing'
+    ) {
+      console.log('----返回--不支持 条内部拖到外部哦-');
+      return;
+    }
 
-    console.log('取出来了-item--' + JSON.stringify(item));
-
-    // 取出来了-item--{"id":4,"name":"已完工","issueItems":[{"id":1,"text":"开始拖的数字"}]}
-
-    //拖动的
-    //const TempIssue = data[fromColumnIndex].issues[fromIssueIndex];
-    let Temp = item.issueItems.filter(item => {
-      return item.id == fromIssueIndex_noA;
-    })[0];
-
-    console.log('-1111-Temp--' + JSON.stringify(Temp));
-
-    //来源
-
-    console.log('--fromIssueIndex_noA--' + fromIssueIndex_noA);
-    //要更新的--去掉的
-    let newIssueItems = item.issueItems.filter(item => {
-      return item.id != fromIssueIndex_noA;
-    });
-
-    item.issueItems = newIssueItems;
-
-    console.log('--更新后 item--' + JSON.stringify(item));
-    //--更新后 item--{"id":4,"name":"已完工","issueItems":[]}
-
-    debugger;
-    //目标
-    let toIssueIndex_noA = toIssueIndex.slice(1);
-    //console.log('---data[fromColumnIndex]-=====' + JSON.stringify(data[1][fromColumnIndex]));
-    //console.log('-来源列--fromColumnIndex===' + fromColumnIndex);
-    //删除一个拖走的
-
-    //根据id 过滤
-    let item2 = issues.filter(item => {
-      return item.id == toColumnIndex;
-    })[0];
-
-    //取出来 新增的老数据组
-    item2.issueItems.push(Temp);
-
-    //更新两个
-    let dataNew = data;
-    let dataItem1 = dataNew[1];
-
-    dataItem1.issues.forEach(i => {
-      if (i.id == fromColumnIndex) {
-        i = item;
+    if (source.droppableId == destination.droppableId) {
+      //判断有没有必要内部排序
+      if (source.index != destination.index) {
+        //排序--拖动的条
+        if (source.droppableId == 'doing') {
+          let temp = doingData.issues.splice(source.index, 1)[0];
+          doingData.issues.splice(destination.index, 0, temp);
+          console.log(
+            '-排序后的-- doingData.issues-' + JSON.stringify(doingData.issues),
+          );
+        }
       }
-      if (i.id == toColumnIndex) {
-        i = item2;
-      }
-    });
+      console.log('----返回--只排序-');
+      return;
+    }
 
-    console.log('--end ------dataItem1---===' + JSON.stringify(dataItem1));
-    dataNew[1] = dataItem1;
+    if (fromColumnIndex == 'todo') {
+      // 外层--
+      //拖动的条
+      let TempIssue = todoData.issues[fromIssueIndex];
+      console.log('--TempIssue--' + JSON.stringify(TempIssue));
+      //重新分配id
+      //取出最大id
+      const maxId = Math.max.apply(
+        null,
+        doingData.issues.map(item => {
+          return item.id;
+        }),
+      );
 
-    //增加一个
+      console.log('--maxId--' + JSON.stringify(maxId));
 
-    /*
-		const TempIssue = data[fromColumnIndex].issues[fromIssueIndex];
+      //_tmp和result是相互独立的，没有任何联系，有各自的存储空间。
+      let deepClone = function(obj) {
+        let _tmp = JSON.stringify(obj); //将对象转换为json字符串形式
+        let result = JSON.parse(_tmp); //将转换而来的字符串转换为原生js对象
+        return result;
+      };
 
-		//删除一个拖走的
-		let TempData = update(data, {
-			[fromColumnIndex]: {
-				issues: (issues) =>
-					update(issues, {
+      //深拷贝一份拖动的
+      let TempIssue2 = deepClone(TempIssue);
+
+      const idNew = maxId + 1;
+      TempIssue2.id = idNew;
+
+      let doingDataNew = this.state.doingData;
+
+      doingDataNew.issues.push(TempIssue2);
+
+      console.log('--doingDataNew--' + JSON.stringify(doingDataNew));
+
+      this.setState({
+        doingData: doingDataNew,
+        activeColumn: null,
+      });
+    } else if (fromColumnIndex == 'doing') {
+      //外层--从doing 拖到 todo
+    } else {
+      // 单元格内部拖
+      let fromIssueIndex_noA = fromIssueIndex.slice(1);
+      console.log(
+        '---------------------------------------------------------fromIssueIndex_noA--------' +
+          fromIssueIndex_noA,
+      );
+      console.log('--doingData-=====' + JSON.stringify(doingData));
+
+      //取出来 拖走的
+      let issues = doingData.issues;
+      console.log('----data11-----issues---' + JSON.stringify(issues));
+
+      //根据id 过滤------拖的 是这一行里的哦
+      let item = issues.filter(item => {
+        return item.id == fromColumnIndex;
+      })[0];
+      console.log('取出来了-item--' + JSON.stringify(item));
+
+      //拖动的
+      //const TempIssue = data[fromColumnIndex].issues[fromIssueIndex];
+      let Temp = item.issueItems.filter(item => {
+        return item.id == fromIssueIndex_noA;
+      })[0];
+
+      console.log('-1111-Temp--' + JSON.stringify(Temp));
+
+      //来源
+      console.log('--fromIssueIndex_noA--' + fromIssueIndex_noA);
+      //要更新的--去掉的--剩余的
+      let newIssueItems = item.issueItems.filter(item => {
+        return item.id != fromIssueIndex_noA;
+      });
+      //要更新的--去掉的--拖动的
+      let newIssueItems2 = item.issueItems.filter(item => {
+        return item.id == fromIssueIndex_noA;
+      })[0];
+      console.log(
+        '-----newIssueItems2---拖动的--' + JSON.stringify(newIssueItems2),
+      );
+      console.log('-----newIssueItems2---拖动的--' + newIssueItems2.text);
+
+      item.issueItems = newIssueItems; //不要删除
+
+      console.log('--更新后 item--' + JSON.stringify(item));
+
+      //目标
+      let toIssueIndex_noA = toIssueIndex.slice(1);
+      //console.log('---data[fromColumnIndex]-=====' + JSON.stringify(data[1][fromColumnIndex]));
+      //console.log('-来源列--fromColumnIndex===' + fromColumnIndex);
+      //删除一个拖走的
+
+      //根据id 过滤
+      let item2 = issues.filter(item => {
+        return item.id == toColumnIndex;
+      })[0];
+
+      //取出来 新增的老数据组
+      item2.issueItems.push(Temp);
+
+      //更新两个
+      let dataNew = data;
+      let dataItem1 = dataNew[1];
+
+      dataItem1.issues.forEach(i => {
+        if (i.id == fromColumnIndex) {
+          i = item;
+        }
+        if (i.id == toColumnIndex) {
+          i = item2;
+        }
+      });
+
+      console.log('--end ------dataItem1---===' + JSON.stringify(dataItem1));
+      dataNew[1] = dataItem1;
+
+      //增加一个
+
+      /*
+        		 const TempIssue = data[fromColumnIndex].issues[fromIssueIndex];
+         		 //删除一个拖走的
+				let TempData = update(data, {
+					[fromColumnIndex]: {
+					issues: (issues) =>
+						update(issues, {
 						$splice: [ [ fromIssueIndex, 1 ] ]
-					})
-			}
-		});
+						})
+					}
+				});
 
-		//增加一个拖来的
-		TempData = update(TempData, {
-			[toColumnIndex]: {
-				issues: (issues) =>
-					update(issues, {
+				//增加一个拖来的
+				TempData = update(TempData, {
+					[toColumnIndex]: {
+					issues: (issues) =>
+						update(issues, {
 						$splice: [ [ toIssueIndex, 0, TempIssue ] ]
-					})
-			}
-		});
-*/
+						})
+					}
+				});
+			*/
 
-    this.setState({
-      data: dataNew,
-      activeColumn: null,
-    });
+      this.setState({
+        data: dataNew,
+        activeColumn: null,
+      });
+    }
   };
 
   render() {
-    const data = this.state.data;
-    const activeColumn = this.state.activeColumn;
+    const todoData = this.state.todoData;
+    const doingData = this.state.doingData;
 
+    const activeColumn = this.state.activeColumn;
+    const data = [todoData, doingData];
     console.log('--render--data---=====' + JSON.stringify(data));
 
     //最外层包裹拖拽区域的wrap。
@@ -498,11 +651,14 @@ class Board extends Component {
             {data.map((column, index) => {
               return (
                 <Column
-                  columnIndex={index}
+                  //columnIndex={index}
+                  columnIndex={column.name}
                   key={column.id}
                   activeColumn={activeColumn}
                   column={column}
                   data={data}
+                  todoData={todoData}
+                  doingData={doingData}
                 />
               );
             })}
